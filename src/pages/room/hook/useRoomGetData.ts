@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-15 13:16:54
+ * @LastEditTime: 2023-02-16 13:31:35
  * @FilePath: /hzsnq-pro/src/pages/room/hook/useRoomGetData.ts
  * @Description:
  *
@@ -37,10 +37,9 @@ export function useRoomGetData() {
    */
   async function getRoomById(id: string): Promise<any> {
     const params = {
-      id: id,
-      type: "get"
+      roomId: id
     }
-    const res: any = await api.createOrUpdateRoom(params)
+    const res: any = await api.getRoom(params)
     const { data } = res
     console.log("房间信息 by id", data)
     roomInfo.value = data
@@ -78,13 +77,29 @@ export function useRoomGetData() {
   async function saveRoomQrcode(qrcode: string): Promise<any> {
     const params = {
       roomQrcode: qrcode,
-      id: roomInfo.value._id,
-      type: "edit"
+      roomId: roomInfo.value._id
     }
-    const res: any = await api.createOrUpdateRoom(params)
+    const res: any = await api.updateRoom(params)
     const { data } = res
     roomInfo.value = data
     console.log("添加二维码返回", data)
+  }
+
+  /**
+   * @description 关闭房间
+   * @return {*}
+   */
+  async function closeRoom(): Promise<any> {
+    const params = {
+      roomId: roomInfo.value._id
+    }
+    const res: any = await api.updateRoom(params)
+    const { data, code } = res
+    if (code === "000") {
+      roomInfo.value = data
+      console.log("关闭房间", data)
+      backToOne()
+    }
   }
 
   /**
@@ -93,8 +108,7 @@ export function useRoomGetData() {
    */
   async function getRoomUser(id: string): Promise<any> {
     const params = {
-      roomId: id,
-      type: "get"
+      roomId: id
     }
 
     const res: any = await api.getRoomUser(params)
@@ -122,6 +136,16 @@ export function useRoomGetData() {
         backToOne()
         return
       }
+      if (roomUserInfo.value.length === 0) {
+        console.log("房间人数不正确")
+        // backToOne()
+        return
+      }
+      if (!roomUserInfo.value) {
+        console.log("房间人数不正确")
+        // backToOne()
+        return
+      }
       const index = roomUserInfo.value.findIndex((i: any) => {
         return userInfo.value._id === i?.user_id[0]._id
       })
@@ -132,7 +156,7 @@ export function useRoomGetData() {
           userId: userInfo.value._id,
           type: "add"
         }
-        const res: any = await api.getRoomUser(params)
+        const res: any = await api.addRoomUser(params)
         const { code } = res
         if (code === "000") {
           console.log("用户加入成功")
@@ -160,11 +184,10 @@ export function useRoomGetData() {
     const params = {
       roomId: roomInfo.value._id,
       userId: userInfo.value._id,
-      text: testValue.value,
-      type: "add"
+      text: testValue.value
     }
 
-    const res: any = await api.barrage(params)
+    const res: any = await api.addBarrage(params)
     const { code } = res
     if (code === "000") {
       pushFn()
@@ -194,11 +217,10 @@ export function useRoomGetData() {
   async function getBarrage(): Promise<any> {
     scrollIntoView.value = ""
     const params = {
-      roomId: roomInfo.value._id,
-      type: "get"
+      roomId: roomInfo.value._id
     }
 
-    const res: any = await api.barrage(params)
+    const res: any = await api.getBarrage(params)
     const { code, data } = res
     if (code === "000") {
       barrageList.value = data
@@ -229,6 +251,7 @@ export function useRoomGetData() {
     getRoomUser,
     barrage,
     getBarrage,
-    pageInit
+    pageInit,
+    closeRoom
   }
 }

@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-17 18:14:02
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-13 18:06:38
+ * @LastEditTime: 2023-02-16 15:06:22
  * @FilePath: /hzsnq-pro/src/api/user/api.user.ts
  * @Description:
  *
@@ -11,9 +11,11 @@
 import http from "@/server/httpGateway"
 
 const methods = {
-  loginOrRegister: "/login",
+  loginOrRegister: "/user/add",
+  getUser: "/user/get",
+  updateUser: "/user/update",
   upload: "/upload",
-  getQrCode: "/getQrCode",
+  addQrCode: "/qrCode/add",
   push: "/push"
 }
 
@@ -24,6 +26,28 @@ const methods = {
 export function loginOrRegister(query: object) {
   return http.post({
     method: methods.loginOrRegister,
+    obj: { data: query }
+  })
+}
+
+/**
+ * @description 获取用户信息
+ * @param query 入参
+ */
+export function getUser(query: object) {
+  return http.post({
+    method: methods.getUser,
+    obj: { data: query }
+  })
+}
+
+/**
+ * @description 更改用户信息
+ * @param query 入参
+ */
+export function updateUser(query: object) {
+  return http.post({
+    method: methods.updateUser,
     obj: { data: query }
   })
 }
@@ -45,7 +69,7 @@ export function upload(query: object) {
  */
 export function getQrCode(query: object) {
   return http.post({
-    method: methods.getQrCode,
+    method: methods.addQrCode,
     obj: { data: query }
   })
 }
@@ -63,6 +87,8 @@ export function push(query: object) {
 
 export const userApi = {
   loginOrRegister,
+  getUser,
+  updateUser,
   upload,
   getQrCode,
   push

@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-15 19:15:35
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-15 09:00:10
+ * @LastEditTime: 2023-02-16 14:42:48
  * @FilePath: /hzsnq-pro/src/hooks/useUser.ts
  * @Description:
  *
@@ -35,11 +35,12 @@ export function useUser() {
    * @description 判断是否有用户信息
    */
   function isLoginFn() {
-    const userInfoLengthForC = Object.keys(userInfo.value).length
+    const userInfoLength = Object.keys(userInfo.value).length
     return function (fn: AllFunction) {
-      if (userInfoLengthForC === 0) {
+      if (userInfoLength === 0) {
         loginOrRegister()
       } else {
+        updatePushId()
         fn()
       }
     }
@@ -61,13 +62,44 @@ export function useUser() {
               pushId: pushId.value
             }
             const res: any = await api.loginOrRegister(params)
-            const { data } = res
-            if (data && data.length > 0) {
-              console.log("个人信息", data[0])
-              setUserInfo(data[0])
+            const { data, code } = res
+            if (code === "000") {
+              console.log("个人信息", data)
+              setUserInfo(data)
             }
           }
         })
+      },
+      fail(err) {
+        console.log(err)
+      }
+    })
+  }
+
+  /**
+   * @description 有登录信息时，判断当前推送id是否更新
+   * @return {*}
+   */
+  async function updatePushId(): Promise<any> {
+    uni.getPushClientId({
+      success: async (res) => {
+        pushId.value = res.cid
+        console.log("客户端推送标识:", res.cid)
+        if (pushId.value !== userInfo.value.push_clientid) {
+          console.log("更新推送信息")
+          const params = {
+            userId: userInfo.value._id,
+            pushId: pushId.value
+          }
+          const res: any = await api.updateUser(params)
+          const { data, code } = res
+          if (code === "000") {
+            console.log("更改个人信息", data)
+            setUserInfo(data)
+          }
+        } else {
+          console.log("推送无更新")
+        }
       },
       fail(err) {
         console.log(err)

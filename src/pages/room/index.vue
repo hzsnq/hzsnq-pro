@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-15 15:26:47
+ * @LastEditTime: 2023-02-16 08:41:59
  * @FilePath: /hzsnq-pro/src/pages/room/index.vue
  * @Description:
  *
@@ -11,8 +11,6 @@
 <script setup lang="ts">
 import NavBar from "@/components/NavBar/NavBar.vue"
 import Popup from "@/components/Popup/Popup.vue"
-import { userInfo } from "os"
-
 import { useRoomGetData } from "./hook/useRoomGetData"
 
 //导入页面公共方法hook
@@ -27,7 +25,8 @@ const {
   barrage,
   getBarrage,
   pageInit,
-  getRoomUser
+  getRoomUser,
+  closeRoom
 } = useRoomGetData()
 pageInit()
 const showPop = ref(false)
@@ -70,10 +69,11 @@ const showPopFn = () => {
   showPop.value = !showPop.value
 }
 
-const closeRoom = () => {
+const handleCloseRoom = () => {
   console.log(roomInfo.value)
   if (roomInfo.value.create_user === userInfo.value._id) {
     console.log("关闭房间")
+    closeRoom()
   } else {
     console.log("只有房主才能关闭房间")
     uni.showToast({
@@ -132,7 +132,7 @@ onShareAppMessage(() => {
       </scroll-view>
     </view>
     <view class="flex justify-between align-center btn-list">
-      <view class="btn" @click="closeRoom">关闭房间</view>
+      <view class="btn" @click="handleCloseRoom">关闭房间</view>
       <view class="btn">刷新房间</view>
       <view class="btn">分享房间</view>
     </view>
