@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-17 18:14:02
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 11:16:39
+ * @LastEditTime: 2023-02-17 14:24:00
  * @FilePath: /hzsnq-pro/src/api/room/api.room.ts
  * @Description:
  *
@@ -16,6 +16,7 @@ const methods = {
   getRoom: "/room/get",
   getRoomUser: "/roomUser/get",
   addRoomUser: "/roomUser/add",
+  updateRoomUser: "/roomUser/update",
   addBarrage: "/barrage/add",
   getBarrage: "/barrage/get"
 }
@@ -97,6 +98,17 @@ export function getBarrage(query: object) {
   })
 }
 
+/**
+ * @description 推出房间
+ * @param query 入参
+ */
+export function updateRoomUser(query: object) {
+  return http.post({
+    method: methods.updateRoomUser,
+    obj: { data: query }
+  })
+}
+
 export const roomApi = {
   createRoom,
   updateRoom,
@@ -104,5 +116,6 @@ export const roomApi = {
   getRoomUser,
   addRoomUser,
   addBarrage,
-  getBarrage
+  getBarrage,
+  updateRoomUser
 }

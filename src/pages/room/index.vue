@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 19:36:24
+ * @LastEditTime: 2023-02-17 17:49:50
  * @FilePath: /hzsnq-pro/src/pages/room/index.vue
  * @Description:
  *
@@ -23,11 +23,10 @@ const {
   scrollIntoView,
   getRoomById,
   barrage,
-  // getBarrage,
   pageInit,
-  // getRoomUser,
   closeRoom,
-  roomListener
+  roomListener,
+  outRoom
 } = useRoomGetData()
 pageInit()
 const showPop = ref(false)
@@ -47,11 +46,28 @@ onLoad((option) => {
   console.log("room option", option)
   const scene = option?.scene ? decodeURIComponent(option.scene).split("=")[1] : undefined
   roomId.value = option?.roomId ? option.roomId : scene ? scene : ""
-  uni.onPushMessage(roomListener)
 })
 
 onShow(() => {
+  uni.onPushMessage(roomListener)
   getRoomById(roomId.value)
+})
+
+onHide(() => {
+  // uni.showModal({
+  //   title: "提示",
+  //   content: "这是一个模态弹窗",
+  //   success: function (res) {
+  //     if (res.confirm) {
+  //       console.log("用户点击确定")
+  //       uni.reLaunch({
+  //         url: `/pages/room/index?roomId=${roomInfo.value._id}`
+  //       })
+  //     } else if (res.cancel) {
+  //       console.log("用户点击取消")
+  //     }
+  //   }
+  // })
 })
 
 watch(
@@ -65,6 +81,10 @@ watch(
 const showPopFn = () => {
   showPop.value = !showPop.value
 }
+
+const showRoomUser = computed(() => (item: AnyObj) => {
+  return item._id === roomInfo.value.create_user ? "房主" : `${item.nick_name}`
+})
 
 const handleCloseRoom = () => {
   console.log(roomInfo.value)
@@ -80,9 +100,16 @@ const handleCloseRoom = () => {
   }
 }
 
-const showRoomUser = computed(() => (item: AnyObj) => {
-  return item._id === roomInfo.value.create_user ? "房主" : `${item.nick_name}`
-})
+const handleOutRoom = () => {
+  if (roomInfo.value.create_user === userInfo.value._id) {
+    uni.showToast({
+      icon: "none",
+      title: "房主无法推出房间"
+    })
+  } else {
+    outRoom()
+  }
+}
 
 onShareAppMessage(() => {
   return {
@@ -90,6 +117,11 @@ onShareAppMessage(() => {
     path: `/pages/room/index?roomId=${roomInfo.value?._id || ""}`,
     imageUrl: `${roomInfo.value?.room_qrcode || ""}`
   }
+})
+
+onUnmounted(() => {
+  console.log("卸载")
+  uni.offPushMessage(roomListener)
 })
 </script>
 
@@ -110,7 +142,7 @@ onShareAppMessage(() => {
       </view>
     </view>
     <view class="input">
-      <input v-model="testValue" placeholder="请输入" placeholder-class="act" />
+      <input v-model="testValue" placeholder="请开始你的表演" placeholder-class="act" />
       <view class="btn" @click="barrage">发送</view>
     </view>
     <view class="remark">
@@ -135,9 +167,9 @@ onShareAppMessage(() => {
     <view class="flex justify-between align-center btn-list">
       <view class="btn" @click="handleCloseRoom">关闭房间</view>
       <view class="btn">刷新房间</view>
-      <view class="btn">分享房间</view>
+      <button v-if="roomInfo.create_user === userInfo._id" open-type="share" class="btn">分享房间</button>
+      <view v-else class="btn" @click="handleOutRoom">退出房间</view>
     </view>
-    <!-- <view class=""></view> -->
   </view>
   <Popup :visible="showPop">
     <template #content>
@@ -177,7 +209,7 @@ onShareAppMessage(() => {
   }
 
   .input {
-    background: #e0e0e0;
+    background: #fff;
     height: 100rpx;
     display: flex;
     justify-content: space-between;
@@ -188,7 +220,7 @@ onShareAppMessage(() => {
       width: 80%;
       height: 60rpx;
       font-size: 30rpx;
-      background: #1cbbb4;
+      background: #999;
       border-radius: 5000rpx;
       padding-left: 30rpx;
       color: #fff;

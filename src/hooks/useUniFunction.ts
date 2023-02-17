@@ -2,18 +2,16 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-15 19:15:35
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-13 19:06:25
+ * @LastEditTime: 2023-02-17 14:58:21
  * @FilePath: /hzsnq-pro/src/hooks/useUniFunction.ts
  * @Description:
  *
  * Copyright (c) 2023 by gome, All Rights Reserved.
  */
 import { backFn } from "@/utils/uniFunction"
-import { useUserStoreHook } from "@/store/modules/user"
 
 // 暴露hook函数
 export function useUniFunction() {
-  const { userInfo } = storeToRefs(useUserStoreHook())
   /**
    * @description: 定义回退1的方法
    */
@@ -24,19 +22,25 @@ export function useUniFunction() {
    * @param {type} params
    * @return {*}
    */
-  function navigateForLoginC(params: string): any {
-    if (Object.keys(userInfo.value).length === 0) {
-      uni.navigateTo({
-        url: "/pages/login/index"
-      })
-      return
-    } else {
-      uni.navigateTo({
-        url: params
-      })
+  /**
+   * @description 弹窗提示2000ms后关闭弹窗
+   * @param {string} title
+   * @param {AllFunction} fn
+   * @return {*}
+   */
+  function showToastFn(title: string, fn?: AllFunction, time = 2000): any {
+    uni.showToast({
+      title: title,
+      icon: "none",
+      mask: true
+    })
+    if (fn) {
+      setTimeout(() => {
+        fn()
+      }, time)
     }
   }
 
   // 返回数据
-  return { backToOne, navigateForLoginC }
+  return { backToOne, showToastFn }
 }

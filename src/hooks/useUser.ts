@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-15 19:15:35
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 14:42:48
+ * @LastEditTime: 2023-02-17 16:47:39
  * @FilePath: /hzsnq-pro/src/hooks/useUser.ts
  * @Description:
  *
@@ -117,5 +117,5 @@ export function useUser() {
   }
 
   // 返回数据
-  return { userInfo, setUserInfo, resetUserInfo, isLogin }
+  return { userInfo, setUserInfo, resetUserInfo, isLogin, updatePushId }
 }
