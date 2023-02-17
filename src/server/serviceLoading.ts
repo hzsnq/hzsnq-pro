@@ -2,8 +2,8 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-01-23 10:05:22
- * @FilePath: /union-ums-h5/src/server/serviceLoading.ts
+ * @LastEditTime: 2023-02-16 17:17:11
+ * @FilePath: /hzsnq-pro/src/server/serviceLoading.ts
  * @Description:处理批量请求loading提升不匹配问题
  *
  * Copyright (c) 2023 by gome, All Rights Reserved.

@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 13:31:35
+ * @LastEditTime: 2023-02-16 19:18:40
  * @FilePath: /hzsnq-pro/src/pages/room/hook/useRoomGetData.ts
  * @Description:
  *
@@ -12,23 +12,24 @@
 import { useUser } from "@/hooks/useUser"
 import { usePages } from "@/hooks/usePages"
 import { useUniFunction } from "@/hooks/useUniFunction"
+import { usePush } from "@/hooks/usePush"
 
 // 暴露hook函数
 export function useRoomGetData() {
   const { userInfo } = useUser()
   const { systemInfo, pageInit } = usePages()
   const { backToOne } = useUniFunction()
+  const { userPushId, listener, pushFn } = usePush()
 
   const state = reactive({
     roomInfo: {} as AnyObj,
     roomUserInfo: [] as Array<AnyObj>,
     testValue: "",
-    userPushId: [] as Array<string>,
     barrageList: [] as Array<AnyObj>,
     scrollIntoView: ""
   })
 
-  const { roomInfo, roomUserInfo, testValue, userPushId, barrageList, scrollIntoView } = toRefs(state)
+  const { roomInfo, roomUserInfo, testValue, barrageList, scrollIntoView } = toRefs(state)
 
   /**
    * @description 通过房间id查询房间信息
@@ -40,14 +41,18 @@ export function useRoomGetData() {
       roomId: id
     }
     const res: any = await api.getRoom(params)
-    const { data } = res
+    const { data, code } = res
     console.log("房间信息 by id", data)
-    roomInfo.value = data
-    if (!data.room_qrcode) {
-      getCode(data._id)
+    if (code === "000") {
+      roomInfo.value = data
+      if (!data.room_qrcode) {
+        getCode(data._id)
+      }
+      getRoomUser()
+      getBarrage()
+    } else {
+      backToOne()
     }
-    getRoomUser(id)
-    getBarrage()
   }
 
   /**
@@ -106,9 +111,9 @@ export function useRoomGetData() {
    * @description 获取房间内的用户
    * @return {*}
    */
-  async function getRoomUser(id: string): Promise<any> {
+  async function getRoomUser(): Promise<any> {
     const params = {
-      roomId: id
+      roomId: roomInfo.value._id
     }
 
     const res: any = await api.getRoomUser(params)
@@ -161,7 +166,7 @@ export function useRoomGetData() {
         if (code === "000") {
           console.log("用户加入成功")
           userPushId.value.push(userInfo.value?.push_clientid)
-          pushFn()
+          pushFn("getRoomUserFn")
         } else {
           console.log("用户加入失败")
           backToOne()
@@ -190,25 +195,25 @@ export function useRoomGetData() {
     const res: any = await api.addBarrage(params)
     const { code } = res
     if (code === "000") {
-      pushFn()
+      pushFn("getBarrageFn")
     }
     testValue.value = ""
     console.log("添加弹幕", code)
   }
 
-  const pushFn = async () => {
-    console.log("推送id", userPushId.value)
+  // const pushFn = async () => {
+  //   console.log("推送id", userPushId.value)
 
-    const params = {
-      id: userPushId.value
-    }
-    const res: any = await api.push(params)
-    // const { data } = res
-    console.log(res)
+  //   const params = {
+  //     id: userPushId.value
+  //   }
+  //   const res: any = await api.push(params)
+  //   // const { data } = res
+  //   console.log(res)
 
-    // avatarUrl.value = data?.fileID
-    // console.log(res)
-  }
+  //   // avatarUrl.value = data?.fileID
+  //   // console.log(res)
+  // }
 
   /**
    * @description 获取房间内的用户
@@ -239,6 +244,23 @@ export function useRoomGetData() {
       // getUserRoom()
     }
   )
+
+  /***
+   * @description 监听回调方法策略
+   */
+  const strategies: AnyObj = {
+    getRoomUserFn: () => {
+      console.log("getRoomUser")
+      getRoomUser()
+    },
+    getBarrageFn: () => {
+      console.log("getBarrage")
+      getBarrage()
+    }
+  }
+
+  const roomListener = listener(strategies)
+
   // 返回数据
   return {
     userInfo,
@@ -252,6 +274,9 @@ export function useRoomGetData() {
     barrage,
     getBarrage,
     pageInit,
-    closeRoom
+    closeRoom,
+    listener,
+    strategies,
+    roomListener
   }
 }

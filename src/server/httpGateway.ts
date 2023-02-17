@@ -52,7 +52,8 @@ const httpRequestGateway = (method: Http.method, headersMethod: string, query: A
 
     //请求header
     const headers = {
-      "content-type": method === "POST" ? "application/json" : "application/x-www-form-urlencoded"
+      "content-type": method === "POST" ? "application/json" : "application/x-www-form-urlencoded",
+      method: headersMethod
     }
 
     //data统一处理成字符串

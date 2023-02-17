@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 13:53:53
+ * @LastEditTime: 2023-02-16 16:48:06
  * @FilePath: /hzsnq-pro/src/pages/index/index.vue
  * @Description:
  *
@@ -44,8 +44,15 @@ const handleRoom = async () => {
     <view class="btn" @click="getCode">生成二维码</view>
     <input type="nickname" placeholder="请输入昵称" />
     <view class="btn" @click="handleSend">发送信息</view> -->
-    <view class="btn" @click="handleRoom">
-      {{ roomInfo?._id ? "打开房间" : "创建房间" }}
+    <view class="content">
+      <image
+        class="cover-img"
+        src="https://mp-c1063ab6-7fcb-415c-a4e6-09ceab9d0918.cdn.bspapp.com/cloudstorage/8facdf1f-8dfd-4453-8ee3-22ea0e410706.png"
+        mode="aspectFill"
+      />
+      <view class="btn" @click="handleRoom">
+        {{ roomInfo?._id ? "开启快乐" : "创建快乐" }}
+      </view>
     </view>
   </view>
 </template>
@@ -54,24 +61,52 @@ const handleRoom = async () => {
 .index {
   .content {
     width: 750rpx;
+    min-height: 100vh;
     margin: 0 auto;
-    color: #fff;
+    position: relative;
+    // background: #7aac5f;
+    // color: #fff;
 
-    .box {
-      width: 100%;
-      position: fixed;
-      left: 0;
-      height: 100rpx;
-      background: #000;
+    .cover-img {
+      width: 750rpx;
+      min-height: 100vh;
+      display: block;
     }
-  }
 
-  .btn {
-    width: 300rpx;
-    height: 100rpx;
-    text-align: center;
-    line-height: 100rpx;
-    background-color: red;
+    .btn {
+      width: 140rpx;
+      height: 140rpx;
+      position: absolute;
+      bottom: 330rpx;
+      left: 50%;
+      margin-left: -70rpx;
+      // background: rgba(0, 0, 0, 0.3);
+      background: linear-gradient(45deg, #39b54a, #8dc63f);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #f9f8e9;
+      animation: styles 1.5s ease-out infinite;
+    }
+
+    @keyframes styles {
+      0% {
+        box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+      20% {
+        box-shadow: 0 0 0 4rpx rgba(0, 0, 0, 0.2);
+        -webkit-transform: scale(1.1);
+        transform: scale(1.1);
+      }
+      80% {
+        box-shadow: 0 0 0 8rpx rgba(0, 0, 0, 0);
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    }
   }
 }
 </style>

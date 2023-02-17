@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-15 19:15:35
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-14 10:25:22
+ * @LastEditTime: 2023-02-16 15:24:06
  * @FilePath: /hzsnq-pro/src/components/NavBar/NavBar.vue
  * @Description:
  *
@@ -54,7 +54,7 @@ const back = () => {
 
 <template>
   <view class="navbar" :style="heightStyle">
-    <view class="fixed flex justify-between align-center" :style="navbarStyle">
+    <view v-if="props.title" class="fixed flex justify-between align-center" :style="navbarStyle">
       <view class="left" @click="back">
         <view class="left-arrow" />
       </view>

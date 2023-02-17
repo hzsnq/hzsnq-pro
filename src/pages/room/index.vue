@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-16 08:41:59
+ * @LastEditTime: 2023-02-16 19:36:24
  * @FilePath: /hzsnq-pro/src/pages/room/index.vue
  * @Description:
  *
@@ -23,10 +23,11 @@ const {
   scrollIntoView,
   getRoomById,
   barrage,
-  getBarrage,
+  // getBarrage,
   pageInit,
-  getRoomUser,
-  closeRoom
+  // getRoomUser,
+  closeRoom,
+  roomListener
 } = useRoomGetData()
 pageInit()
 const showPop = ref(false)
@@ -46,11 +47,7 @@ onLoad((option) => {
   console.log("room option", option)
   const scene = option?.scene ? decodeURIComponent(option.scene).split("=")[1] : undefined
   roomId.value = option?.roomId ? option.roomId : scene ? scene : ""
-  uni.onPushMessage((res) => {
-    console.log("push", res)
-    getRoomUser(roomId.value)
-    getBarrage()
-  })
+  uni.onPushMessage(roomListener)
 })
 
 onShow(() => {
@@ -83,6 +80,10 @@ const handleCloseRoom = () => {
   }
 }
 
+const showRoomUser = computed(() => (item: AnyObj) => {
+  return item._id === roomInfo.value.create_user ? "房主" : `${item.nick_name}`
+})
+
 onShareAppMessage(() => {
   return {
     title: `${roomInfo.value?.room_name || "未知的房间"}`,
@@ -98,7 +99,7 @@ onShareAppMessage(() => {
     <view class="flex align-center list">
       <view v-for="(item, index) in roomUserInfo" :key="index" class="item">
         <image class="avatar" :src="item.user_id[0].avatar_url" />
-        <view class="text">{{ item.user_id[0].nick_name }}</view>
+        <view class="text">{{ showRoomUser(item.user_id[0]) }}</view>
       </view>
       <view class="item" @click="showPopFn">
         <image
@@ -171,6 +172,7 @@ onShareAppMessage(() => {
     .text {
       font-size: 26rpx;
       padding-top: 10rpx;
+      text-align: center;
     }
   }
 
