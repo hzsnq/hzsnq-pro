@@ -2,7 +2,7 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-17 17:49:50
+ * @LastEditTime: 2023-02-17 18:14:51
  * @FilePath: /hzsnq-pro/src/pages/room/index.vue
  * @Description:
  *
@@ -173,7 +173,7 @@ onUnmounted(() => {
   </view>
   <Popup :visible="showPop">
     <template #content>
-      <image v-show="roomInfo?.room_qrcode" class="img" :src="roomInfo?.room_qrcode" />
+      <image v-show="roomInfo?.room_qrcode" class="img" :src="roomInfo?.room_qrcode" :show-menu-by-longpress="true" />
       <view class="close" @click="showPopFn">X</view>
     </template>
   </Popup>

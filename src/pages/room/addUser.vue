@@ -2,57 +2,46 @@
  * @Author: taoyongjian taoyongjian-zf@bjebc.com
  * @Date: 2023-01-20 14:15:04
  * @LastEditors: taoyongjian taoyongjian-zf@bjebc.com
- * @LastEditTime: 2023-02-17 20:11:51
- * @FilePath: /hzsnq-pro/src/pages/index/index.vue
+ * @LastEditTime: 2023-02-18 11:36:33
+ * @FilePath: /hzsnq-pro/src/pages/room/addUser.vue
  * @Description:
  *
  * Copyright (c) 2023 by gome, All Rights Reserved.
 -->
 <script setup lang="ts">
 import { usePages } from "@/hooks/usePages"
-import { useIndex } from "./hooks/useIndex"
 
 //导入页面公共方法hook
 const { pageInit } = usePages()
-const { roomInfo, getUserRoom, createRoom } = useIndex()
 pageInit()
 
 onLoad(() => {})
 
-onShow(() => {
-  getUserRoom()
-})
+// onShow(() => {
+//   getUserRoom()
+// })
 
 const handleRoom = async () => {
-  if (roomInfo.value?._id) {
-    console.log("打开房间")
-    uni.navigateTo({
-      url: `/pages/room/index?roomId=${roomInfo.value._id}`
-    })
-  } else {
-    createRoom()
-  }
+  // if (roomInfo.value?._id) {
+  //   console.log("打开房间")
+  //   uni.navigateTo({
+  //     url: `/pages/room/index?roomId=${roomInfo.value._id}`
+  //   })
+  // } else {
+  //   createRoom()
+  // }
 }
 </script>
 
 <template>
   <view class="index">
-    <!-- <button class="avatar-wrapper" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
-      <image class="avatar" :src="avatarUrl" />
-    </button> -->
-    <!-- <image :src="avatarUrl" />
-    <view class="btn" @click="getCode">生成二维码</view>
-    <input type="nickname" placeholder="请输入昵称" />
-    <view class="btn" @click="handleSend">发送信息</view> -->
     <view class="content">
       <image
         class="cover-img"
         src="https://mp-c1063ab6-7fcb-415c-a4e6-09ceab9d0918.cdn.bspapp.com/cloudstorage/8facdf1f-8dfd-4453-8ee3-22ea0e410706.png"
         mode="aspectFill"
       />
-      <view class="btn" @click="handleRoom">
-        {{ roomInfo?._id ? "开启快乐" : "创建快乐" }}
-      </view>
+      <view class="btn" @click="handleRoom"> 接受邀请 </view>
     </view>
   </view>
 </template>
